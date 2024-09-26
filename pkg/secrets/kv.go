@@ -9,7 +9,7 @@ import (
 
 	"github.com/hashicorp/hcl/v2/hclsimple"
 
-	"github.com/CorefluxCommunity/zeusctl/pkg/vault"
+	"github.com/CorefluxCommunity/vaultctl/pkg/vault"
 )
 
 type ContextConfig struct {
@@ -130,7 +130,7 @@ func getSavedToken() (string, error) {
 		return "", err
 	}
 
-	tokenFile := filepath.Join(homeDir, ".zeusctl", "token")
+	tokenFile := filepath.Join(homeDir, ".vaultctl", "token")
 	tokenBytes, err := os.ReadFile(tokenFile)
 	if err != nil {
 		return "", err

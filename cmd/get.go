@@ -1,8 +1,8 @@
 package cmd
 
 import (
-	"github.com/CorefluxCommunity/zeusctl/pkg/secrets"
-	"github.com/CorefluxCommunity/zeusctl/pkg/utils"
+	"github.com/CorefluxCommunity/vaultctl/pkg/secrets"
+	"github.com/CorefluxCommunity/vaultctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 

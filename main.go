@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/CorefluxCommunity/zeusctl/cmd"
+	"github.com/CorefluxCommunity/vaultctl/cmd"
 )
 
 func main() {

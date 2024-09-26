@@ -66,7 +66,7 @@ func storeToken(token string) error {
 		return fmt.Errorf("failed to get user home directory: %w", err)
 	}
 
-	configDir := filepath.Join(homeDir, ".zeusctl")
+	configDir := filepath.Join(homeDir, ".vaultctl")
 	err = os.MkdirAll(configDir, 0700)
 	if err != nil {
 		return fmt.Errorf("failed to create config directory: %w", err)

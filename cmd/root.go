@@ -8,17 +8,13 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/CorefluxCommunity/zeusctl/pkg/utils"
+	"github.com/CorefluxCommunity/vaultctl/pkg/utils"
 )
 
 var (
 	// CLI config
-	config     ZeusConfig
+	config     VaultConfig
 	configFile string
-
-	// Commands
-	// generate-root
-	vaultGenerateRootNonce string
 
 	// login
 	method   string // TODO: Create enum for auth methods
@@ -30,19 +26,17 @@ var (
 	exportSecrets bool
 
 	rootCmd = &cobra.Command{
-		Use: "zeusctl",
+		Use: "vaultctl",
 	}
 )
 
-type ZeusConfig struct {
+type VaultConfig struct {
 	Clusters map[string][]*VaultClusterConfig `hcl:"cluster" mapstructure:"cluster"`
 }
 
 type VaultClusterConfig struct {
 	Address string   `hcl:"address" mapstructure:"address"`
 	Servers []string `hcl:"servers" mapstructure:"servers"`
-	Keys    []string `hcl:"keys" mapstructure:"keys"`
-	KeyFile string   `hcl:"key_file" mapstructure:"key_file"`
 }
 
 // Execute executes the root command.
@@ -53,7 +47,7 @@ func Execute() error {
 func init() {
 	cobra.OnInitialize(initConfig)
 
-	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file (default is $HOME/.zeusctl/zeusctl.hcl)")
+	rootCmd.PersistentFlags().StringVar(&configFile, "config", "", "config file (default is $HOME/.vaultctl/config.hcl)")
 }
 
 func initConfig() {
@@ -65,10 +59,10 @@ func initConfig() {
 		home, err := homedir.Dir()
 		cobra.CheckErr(err)
 
-		// Search config in $HOME/zeusctl directory with name "zeusctl" (without extension).
+		// Search config in $HOME/vaultctl directory with name "config" (without extension).
 		// TODO: Get cli config directory from shell env
-		viper.AddConfigPath(home + "/.zeusctl")
-		viper.SetConfigName("zeusctl")
+		viper.AddConfigPath(home + "/.vaultctl")
+		viper.SetConfigName("config")
 		viper.SetConfigType("hcl")
 	}
 
@@ -80,7 +74,7 @@ func initConfig() {
 		utils.PrintFatal(fmt.Sprintf("unable to decode into struct, %v", err), 1)
 	}
 
-	// get zeusctl config direction and set as cwd
+	// get vaultctl config direction and set as cwd
 	configDir, err := getConfigDir()
 	if err != nil {
 		utils.PrintFatal(err.Error(), 1)
@@ -123,20 +117,6 @@ func getVaultAddress(clusterName string) (string, error) {
 	return "", fmt.Errorf("no address or servers found for cluster '%s'", clusterName)
 }
 
-func (vc *VaultClusterConfig) keyring() ([]string, error) {
-	keys := vc.Keys
-	if vc.KeyFile != "" {
-		kf, err := utils.ReadKeyFile(vc.KeyFile)
-		if err != nil {
-			return nil, err
-		}
-
-		keys = append(keys, kf...)
-	}
-
-	return keys, nil
-}
-
 func getConfigDir() (string, error) {
 	home, err := homedir.Dir()
 	if err != nil {
@@ -144,7 +124,7 @@ func getConfigDir() (string, error) {
 	}
 
 	// TODO: Get cli config directory from shell env
-	path := home + "/.zeusctl"
+	path := home + "/.vaultctl"
 
 	return path, nil
 }

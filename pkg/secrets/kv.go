@@ -108,15 +108,54 @@ func GetSecrets(contextName string, contextFile string, exportSecrets bool, vaul
 				}
 			}
 
-			exportName := key.Name
-			if key.ExportName != "" {
-				exportName = key.ExportName
-			}
-
 			if exportSecrets {
-				fmt.Printf("export %s='%s'\n", exportName, value)
+				envFile := "/tmp/secrets.env"
+				file, err := os.Create(envFile)
+				if err != nil {
+					return fmt.Errorf("failed to create env file: %w", err)
+				}
+				defer file.Close()
+
+				for _, secret := range targetContext.Secrets {
+					secretData, err := vaultClient.FetchSecret(secret.Path)
+					if err != nil {
+						fmt.Printf("Warning: Failed to fetch secret %s: %v\n", secret.Path, err)
+						continue
+					}
+
+					for _, key := range secret.Keys {
+						value, ok := secretData[key.Name].(string)
+						if !ok {
+							fmt.Printf("Warning: Key %s not found in secret %s\n", key.Name, secret.Path)
+							continue
+						}
+
+						if key.Base64Decode {
+							decodedValue, err := base64.StdEncoding.DecodeString(value)
+							if err != nil {
+								fmt.Printf("Warning: Failed to decode %s: %v\n", key.Name, err)
+								continue
+							}
+							value = string(decodedValue)
+						}
+
+						exportName := key.Name
+						if key.ExportName != "" {
+							exportName = key.ExportName
+						}
+
+						// Escape special characters in value
+						value = strings.ReplaceAll(value, "'", "'\"'\"'")
+						_, err = fmt.Fprintf(file, "%s='%s'\n", exportName, value)
+						if err != nil {
+							return fmt.Errorf("failed to write to env file: %w", err)
+						}
+					}
+				}
+
+				fmt.Printf("Secrets exported to %s. Source it with 'source %s'\n", envFile, envFile)
 			} else {
-				fmt.Printf("%s=%s\n", exportName, value)
+				fmt.Println("Secrets printed to stdout")
 			}
 		}
 	}

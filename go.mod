@@ -3,7 +3,7 @@ module github.com/CorefluxCommunity/vaultctl
 go 1.21.13
 
 require (
-	github.com/hashicorp/hcl/v2 v2.22.0
+	github.com/hashicorp/hcl/v2 v2.23.0
 	github.com/hashicorp/vault/api v1.15.0
 	github.com/logrusorgru/aurora v2.0.3+incompatible
 	github.com/mitchellh/go-homedir v1.1.0

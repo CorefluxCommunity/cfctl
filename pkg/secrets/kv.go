@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/hashicorp/hcl/v2/hclsimple"
@@ -104,7 +105,8 @@ func GetSecrets(contextName string, contextFile string, exportSecrets bool, vaul
 				if err != nil {
 					fmt.Printf("Warning: Failed to base64 decode %s: %v\n", key.Name, err)
 				} else {
-					value = string(decodedValue)
+					// Check if it's a PEM certificate and format it
+					value = formatPEMIfCertificate(decodedValue)
 				}
 			}
 
@@ -122,6 +124,28 @@ func GetSecrets(contextName string, contextFile string, exportSecrets bool, vaul
 	}
 
 	return nil
+}
+
+func formatPEMIfCertificate(decodedValue []byte) string {
+	const lineLength = 64
+	pemHeader := "-----BEGIN CERTIFICATE-----"
+	pemFooter := "-----END CERTIFICATE-----"
+	certPattern := regexp.MustCompile(`^MI[A-Za-z0-9+/=]{20,}`)
+
+	if certPattern.Match(decodedValue) {
+		encoded := base64.StdEncoding.EncodeToString(decodedValue)
+		var lines []string
+		for i := 0; i < len(encoded); i += lineLength {
+			end := i + lineLength
+			if end > len(encoded) {
+				end = len(encoded)
+			}
+			lines = append(lines, encoded[i:end])
+		}
+		return fmt.Sprintf("%s\n%s\n%s", pemHeader, strings.Join(lines, "\n"), pemFooter)
+	}
+
+	return string(decodedValue)
 }
 
 func getSavedToken() (string, error) {

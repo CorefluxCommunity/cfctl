@@ -13,9 +13,6 @@ schema = 3
   [mod."github.com/cenkalti/backoff/v4"]
     version = "v4.3.0"
     hash = "sha256-wfVjNZsGG1WoNC5aL+kdcy6QXPgZo4THAevZ1787md8="
-  [mod."github.com/ebfe/scard"]
-    version = "v0.0.0-20230420082256-7db3f9b7c8a7"
-    hash = "sha256-fUJV9ec3CWy+Gh4ChCcWu/szAsEgqU2eVw0NNZu9B4c="
   [mod."github.com/fsnotify/fsnotify"]
     version = "v1.7.0"
     hash = "sha256-MdT2rQyQHspPJcx6n9ozkLbsktIOJutOqDuKpNAtoZY="
@@ -136,9 +133,6 @@ schema = 3
   [mod."golang.org/x/sys"]
     version = "v0.25.0"
     hash = "sha256-PXZ9EQZ7SFpcL7d3E1+KGTxziYlHEIZPfoXEbnaVD3I="
-  [mod."golang.org/x/term"]
-    version = "v0.24.0"
-    hash = "sha256-PfC5psjzEWKRm1DlnBXX0ntw9OskJFrq1RRjyBa1lOk="
   [mod."golang.org/x/text"]
     version = "v0.18.0"
     hash = "sha256-aNvJW4gQs+MTfdz6DZqyyHQS2GJ9W8L8qKPVODPn4+k="

@@ -104,7 +104,7 @@ vaultctl login cluster <cluster-name> --method userpass --user <username> --pass
 
 ### ``get secrets``
 
-Fetch secrets from Vault based on a predefined context from a secrets context file. The secrets can be exported as environment variables using the --export flag.
+Fetch secrets from Vault based on a predefined context from a secrets context file. The secrets can be exported to a .env file using the --export flag.
 
 **Usage:**
 
@@ -115,7 +115,7 @@ vaultctl get secrets <cluster-name> <context-name> --context <file-path> [--expo
 ``cluster-name``: The Vault cluster name.
 ``context-name``: The context name defined in the context file.
 ``context``: (Optional) Path to the context file. Defaults to ./contexts.hcl.
-``export``: (Optional) Export secrets as environment variables.
+``export``: (Optional) Export secrets as env file at ``/tmp/secrets.env``.
 
 ```bash
 vaultctl get secrets prod app-secrets --context ./app-contexts.hcl --export
